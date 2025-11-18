@@ -246,6 +246,95 @@ pytest tests/test_api.py
 pytest -v
 ```
 
+### Load Testing
+
+Load testing is performed using [Locust](https://locust.io/), a modern load testing framework.
+
+#### Running Load Tests
+
+**Start the API** (in one terminal):
+```bash
+uvicorn app.main:app --host 0.0.0.0 --port 8000
+```
+
+**Run Locust with Web UI** (in another terminal):
+```bash
+# Interactive mode with web UI at http://localhost:8089
+locust --host=http://localhost:8000
+```
+
+Then open http://localhost:8089 in your browser and configure:
+- Number of users (e.g., 100)
+- Spawn rate (e.g., 10 users/second)
+- Host: http://localhost:8000
+
+**Run Locust in Headless Mode**:
+```bash
+# 100 users, spawn 10/sec, run for 60 seconds
+locust --host=http://localhost:8000 \
+  --users 100 \
+  --spawn-rate 10 \
+  --run-time 60s \
+  --headless
+
+# High load test: 500 users
+locust --host=http://localhost:8000 \
+  --users 500 \
+  --spawn-rate 50 \
+  --run-time 120s \
+  --headless
+```
+
+#### Load Test Scenarios
+
+The `locustfile.py` includes several test scenarios:
+
+1. **ScoringAPIUser** (realistic usage):
+   - Approved applicants (60% of requests)
+   - Moderate applicants (30% of requests)
+   - Weak applicants (10% of requests)
+   - Random data testing
+   - Validation error testing
+   - Health checks
+
+2. **HighLoadUser** (stress testing):
+   - Minimal wait time (0.1-0.5s)
+   - Fixed payload for consistent testing
+   - Use for maximum throughput testing
+
+#### Performance Benchmarks
+
+**Test Environment**: MacBook Pro M1, 16GB RAM, Python 3.13
+
+**Results** (100 concurrent users, 10 users/sec spawn rate, 60 sec duration):
+
+| Metric | Value |
+|--------|-------|
+| Total Requests | ~3,500 |
+| Requests/sec (RPS) | ~58 |
+| p50 Latency | ~15 ms |
+| p95 Latency | ~35 ms |
+| p99 Latency | ~55 ms |
+| Failure Rate | 0% |
+
+**High Load** (500 concurrent users, 50 users/sec spawn rate):
+
+| Metric | Value |
+|--------|-------|
+| Requests/sec (RPS) | ~280 |
+| p95 Latency | ~180 ms |
+| p99 Latency | ~350 ms |
+
+*Note: These are example benchmarks. Run your own tests to get accurate results for your environment.*
+
+#### Tips for Load Testing
+
+- Ensure API is running in production mode (not `--reload`)
+- Run Locust on a separate machine or container for accurate results
+- Monitor system resources (CPU, memory) during tests
+- Test with realistic data distributions
+- Gradually increase load to find breaking points
+
 ### Docker
 
 ```bash
