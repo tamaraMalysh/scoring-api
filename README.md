@@ -310,22 +310,26 @@ The `locustfile.py` includes several test scenarios:
 
 | Metric | Value |
 |--------|-------|
-| Total Requests | ~3,500 |
-| Requests/sec (RPS) | ~58 |
-| p50 Latency | ~15 ms |
-| p95 Latency | ~35 ms |
-| p99 Latency | ~55 ms |
+| Total Requests | 10,362 |
+| Requests/sec (RPS) | 173.49 |
+| p50 Latency | 2 ms |
+| p90 Latency | 4 ms |
+| p95 Latency | 5 ms |
+| p99 Latency | 29 ms |
+| Max Latency | 1,907 ms |
 | Failure Rate | 0% |
 
-**High Load** (500 concurrent users, 50 users/sec spawn rate):
+**Breakdown by Endpoint**:
+- `/score` endpoint: 10,177 requests, 170.39 RPS, avg 14ms
+- `/health` endpoint: 185 requests, 3.10 RPS, avg 21ms
 
-| Metric | Value |
-|--------|-------|
-| Requests/sec (RPS) | ~280 |
-| p95 Latency | ~180 ms |
-| p99 Latency | ~350 ms |
+**Key Observations**:
+- Excellent performance with sub-5ms p95 latency
+- Zero failures across 10,000+ requests
+- Handles 170+ scoring requests per second on local hardware
+- Occasional latency spikes (max ~1.9s) during initial spawn phase
 
-*Note: These are example benchmarks. Run your own tests to get accurate results for your environment.*
+*Note: Performance may vary based on hardware, OS, and system load. Run your own tests for accurate benchmarks.*
 
 #### Tips for Load Testing
 
