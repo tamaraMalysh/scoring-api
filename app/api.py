@@ -80,9 +80,6 @@ REASON_CREDIT_LIMITED_YEARS = 3
 REASON_CREDIT_INSUFFICIENT_YEARS = 2
 
 
-# ==================== Data Classes ====================
-
-
 @dataclass
 class ScoringFactors:
     """Container for individual scoring factor contributions."""
@@ -231,7 +228,9 @@ def determine_decision(
         return "rejected"
 
 
-def determine_risk_level(decision: Literal["approved", "review", "rejected"]) -> Literal["low", "medium", "high"]:
+def determine_risk_level(
+    decision: Literal["approved", "review", "rejected"]
+) -> Literal["low", "medium", "high"]:
     """
     Determine risk level based on decision.
 
@@ -312,9 +311,6 @@ def _build_rejected_reason(score: int, request: ScoreRequest) -> str:
     return " ".join(reason_parts)
 
 
-# ==================== Main Calculation ====================
-
-
 def calculate_score(request: ScoreRequest) -> ScoreResponse:
     """
     Calculate credit score based on applicant features.
@@ -376,6 +372,9 @@ async def score_applicant(request: ScoreRequest) -> ScoreResponse:
 
     result = calculate_score(request)
 
-    logger.info(f"Score calculated: {result.score}, decision={result.decision}, " f"risk_level={result.risk_level}")
+    logger.info(
+        f"Score calculated: {result.score}, "
+        f"decision={result.decision} risk_level={result.risk_level}"
+    )
 
     return result
